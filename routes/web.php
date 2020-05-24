@@ -14,5 +14,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('map');
+})->name('map');
+
+Route::get('/test', function () {
+    return view('mapcopy');
 });
+
+Route::get('/mess', function () {
+    return view('mapmess');
+});
+
+Route::resource('district', 'DistrictController')->middleware('auth');
+
+Route::resource('report', 'DistrictReportController')->middleware('auth');
+
+Auth::routes();
+
+//Route::get('/home', 'HomeController@index')->name('home');
