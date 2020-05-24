@@ -3,7 +3,7 @@
     <head>
         <title>Layer KMZ</title>
 
-        <style> html, body, #map { height: 100%; width: 100%; padding: 0; margin: 0; } </style>
+        <style> html, body, #map { height: 100%;} </style>
         <!-- Leaflet (JS/CSS) -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
