@@ -14,7 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('map');
+    $reports = DB::table('district_reports')
+    ->join('districts', 'district_reports.district_id', '=', 'districts.id')
+    ->select('district_reports.*', 'districts.district_name')
+    ->get();
+
+    return view('map', ['reports' => $reports]);
 })->name('map');
 
 Route::get('/test', function () {
@@ -31,4 +36,6 @@ Route::resource('report', 'DistrictReportController')->middleware('auth');
 
 Auth::routes();
 
-//Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', function() {
+    return redirect()->route('map');
+})->name('home');

@@ -98,10 +98,60 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <p class="font-weight-bold mb-0">Peta Sebaran Kasus Positif</p>
+                                    <p class="font-weight-bold mb-0">Data Kasus Positif</p>
                                 </div>
                                 <div class="card-body">
-                                    
+                                    <table class="table table-stripped">
+                                        <thead class="thead-primary">
+                                            <tr role="row">
+                                                <th rowspan="1" colspan="1" class="text-center">Kabupaten</th>
+                                                <th rowspan="1" colspan="6" class="text-center">Positif</th>
+                                                <th rowspan="1" colspan="1" class="text-center">Dirawat</th>
+                                                <th rowspan="1" colspan="1" class="text-center">Sembuh</th>
+                                                <th rowspan="1" colspan="1" class="text-center">Meninggal</th>
+                                            </tr>
+                                            <tr role="row">
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="2" class="text-center">PPLN</th>
+                                                <th rowspan="1" colspan="1" class="text-center">PPDN</th>
+                                                <th rowspan="1" colspan="1" class="text-center">Transmisi Lokal</th>
+                                                <th rowspan="1" colspan="1" class="text-center">Positif Lainnya</th>
+                                                <th rowspan="1" colspan="1" class="text-center">Total Positif</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                            </tr>
+                                            <tr role="row">
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1" class="text-center">WNA</th>
+                                                <th rowspan="1" colspan="1" class="text-center">WNI</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                                <th rowspan="1" colspan="1">&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php $i = 1; ?>
+                                            @foreach($reports as $report)
+                                            <tr>
+                                                <td class="text-center">{{$report->district_name}}</td>
+                                                <td class="text-center">{{$report->foreign_travel_agent_foreign}}</td>
+                                                <td class="text-center">{{$report->foreign_travel_agent_indonesian}}</td>
+                                                <td class="text-center">{{$report->domestic_travel_agent}}</td>
+                                                <td class="text-center">{{$report->local_transmission}}</td>
+                                                <td class="text-center">{{$report->other_positive}}</td>
+                                                <td class="text-center">{{$report->total_positive}}</td>
+                                                <td class="text-center">{{$report->treated}}</td>
+                                                <td class="text-center">{{$report->recovered}}</td>
+                                                <td class="text-center">{{$report->died}}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -146,7 +196,7 @@
             });
 
             // Add remote KMZ files as layers (NB if they are 3rd-party servers, they MUST have CORS enabled)
-            
+            kmzParser.load('bali_districts.kmz');
 
             var control = L.control.layers(null, null, { collapsed:false }).addTo(map);
         </script>

@@ -54,7 +54,7 @@
             });
 
             // Add remote KMZ files as layers (NB if they are 3rd-party servers, they MUST have CORS enabled)
-            kmzParser.load('warnakabupaten.kmz');
+            kmzParser.load('bali_districts.kmz');
 
             var control = L.control.layers(null, null, { collapsed:false }).addTo(map);
         </script>
