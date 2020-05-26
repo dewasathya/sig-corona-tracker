@@ -25,6 +25,7 @@ class MapController extends Controller
      */
     public function index(Request $request)
     {
+        
         // Date
         // $date = "2020/04/01";
         if ($request->has('date')) {
@@ -47,6 +48,16 @@ class MapController extends Controller
         ->whereDate('report_date', $date)
         ->orderBy('district_id', 'asc')
         ->get();
+
+        if ($reports->isEmpty()) {
+            $reports = DB::table('district_reports')
+            ->join('districts', 'district_reports.district_id', '=', 'districts.id')
+            ->select('district_reports.*', 'districts.district_name')
+            ->orderBy('report_date', 'desc')
+            ->orderBy('district_id', 'asc')
+            ->limit(10)
+            ->get();
+        }
 
         // Find & Replace and save to bali-seperated-live
         $message = [
@@ -74,6 +85,6 @@ class MapController extends Controller
 
         file_put_contents($write_path, $str);
 
-        return view('map', ['reports' => $reports, 'date_show' => $date_show, 'date' => $temp_date, 'gradient' => $gradient]);
+        return view('map', ['reports' => $reports, 'date_show' => $date_show, 'date' => $temp_date]);
     }
 }

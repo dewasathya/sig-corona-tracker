@@ -120,7 +120,7 @@
                                 <div class="card-body">
                                     <form method="GET" action="{{route('map')}}">
                                         <label for="show_date" class="col-form-label">Tanggal Laporan</label>
-                                        <input type="date" class="form-control mb-1" name="date" value="{{$date}}"/>
+                                        <input type="date" class="form-control mb-1" name="date" value="{{ $date }}"/>
 
                                         <button type="submit" class="btn btn-primary mb-0 float-right">
                                             Cari
@@ -252,13 +252,13 @@
 
             // get color depending on population density value
             function getColor(d) {
-                return d > 300 ? '#BF2300' :
-                        d > 200  ? '#A33820' :
-                        d > 100  ? '#884E41' :
-                        d > 60  ? '#6D6362' :
-                        d > 40   ? '#517982' :
-                        d > 20   ? '#368EA3' :
-                        d > 5   ? '#1BA4C4' :
+                return d > 80 ? '#BF2300' :
+                        d > 50  ? '#A33820' :
+                        d > 30  ? '#884E41' :
+                        d > 20  ? '#6D6362' :
+                        d > 10   ? '#517982' :
+                        d > 5   ? '#368EA3' :
+                        d > 1   ? '#1BA4C4' :
                                     '#00BAE5';
             }
 
@@ -322,7 +322,7 @@
             legend.onAdd = function (map) {
 
                 var div = L.DomUtil.create('div', 'info legend'),
-                    grades = [0, 5, 20, 40, 60, 100, 200, 300],
+                    grades = [0, 1, 5, 10, 20, 30, 50, 80],
                     labels = [],
                     from, to;
 
