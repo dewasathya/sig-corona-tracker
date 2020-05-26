@@ -12,14 +12,14 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Scripts -->
-        <script src="{{ asset('js/app.js') }}" defer></script>
+        <script src="/js/app.js" defer></script>
 
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
         <!-- Styles -->
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+        <link href="/css/app.css" rel="stylesheet">
 
         <!-- Leaflet (JS/CSS) -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
@@ -212,7 +212,7 @@
             </main>
         </div>
 
-        <script type="text/javascript" src="{{ asset('js/bali-seperated-live.js') }}"></script>
+        <script type="text/javascript" src="/js/bali-seperated-live.js"></script>
 
         <script type="text/javascript">
             // Insert Total Positive

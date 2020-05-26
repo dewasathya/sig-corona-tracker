@@ -18,7 +18,8 @@ class CreateDistrictReportsTable extends Migration
             $table->bigInteger('district_id')->unsigned();
             $table->foreign('district_id')->references('id')->on('districts');
             $table->date('report_date');
-            $table->integer('foreign_travel_agent');
+            $table->integer('foreign_travel_agent_foreign');
+            $table->integer('foreign_travel_agent_indonesian');
             $table->integer('domestic_travel_agent');
             $table->integer('local_transmission');
             $table->integer('other_positive');
