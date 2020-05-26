@@ -26,8 +26,16 @@ class MapController extends Controller
     public function index(Request $request)
     {
         // Date
-        $date = "2020/04/01";
-        // $date = date("Y/m/d");
+        // $date = "2020/04/01";
+        if ($request->has('date')) {
+            $temp_date = $request->date;
+        }
+        else {
+            $temp_date = date("Y-m-d");
+        }
+
+        $date = date_create_from_format("Y-m-d", $temp_date);
+        $date_show = date_format($date, "d F Y");
 
         // Coloring
         $gradient = array("step" => 6, "min" => "#00BAE5", "max" => "#BF2300");
@@ -66,6 +74,6 @@ class MapController extends Controller
 
         file_put_contents($write_path, $str);
 
-        return view('map', ['reports' => $reports, 'gradient' => $gradient]);
+        return view('map', ['reports' => $reports, 'date_show' => $date_show, 'date' => $temp_date, 'gradient' => $gradient]);
     }
 }
