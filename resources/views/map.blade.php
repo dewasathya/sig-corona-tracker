@@ -26,6 +26,22 @@
         <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
         <!-- Leaflet- KMZ -->
         <script src="https://unpkg.com/leaflet-kmz@latest/dist/leaflet-kmz.js"></script>
+
+        <style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			
+		}
+	</style>
+
+	<style>
+        #map {  }
+        .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+        .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+    </style>
     </head>
 
     <body>
@@ -175,30 +191,135 @@
             </main>
         </div>
 
+        <script type="text/javascript" src="{{ asset('js/bali-seperated-live.js') }}"></script>
 
-        <script>
-            var map = L.map('map');
-            map.invalidateSize();
-            map.setView(new L.LatLng(-8.691325, 115.193538), 11);
+        <script type="text/javascript">
+            // Insert Total Positive
+            
 
-            L.tileLayer('https://api.maptiler.com/maps/streets/256/{z}/{x}/{y}.png?key=ryTGNLroM8LwjCfSWkCH', {
-                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>', 
+            // Map
+            var map = L.map('map').setView([-8.4560705, 115.1118982], 10);
+
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                id: 'mapbox/light-v9',
+                tileSize: 512,
+                zoomOffset: -1
             }).addTo(map);
 
-            // Instantiate KMZ parser (async)
-            var kmzParser = new L.KMZParser({
-                onKMZLoaded: function(layer, name) {
-                    control.addOverlay(layer, name);
-                    layer.addTo(map);
-                },
-                // interactive: false,
-                pointable: true,
-            });
 
-            // Add remote KMZ files as layers (NB if they are 3rd-party servers, they MUST have CORS enabled)
-            kmzParser.load('bali_districts.kmz');
+            // control that shows state info on hover
+            var info = L.control();
 
-            var control = L.control.layers(null, null, { collapsed:false }).addTo(map);
+            info.onAdd = function (map) {
+                this._div = L.DomUtil.create('div', 'info');
+                this.update();
+                return this._div;
+            };
+
+            info.update = function (props) {
+                this._div.innerHTML = '<h4>Kasus Positif COVID-19</h4>' +  (props ?
+                    '<b>' + props.name + '</b><br />' + 'Total ' + props.total + ' kasus positif'
+                    : 'Letakkan kursor di atas kabupaten');
+            };
+
+            info.addTo(map);
+
+
+            // get color depending on population density value
+            function getColor(d) {
+                return d > 1000 ? '#800026' :
+                        d > 500  ? '#BD0026' :
+                        d > 200  ? '#E31A1C' :
+                        d > 100  ? '#FC4E2A' :
+                        d > 50   ? '#FD8D3C' :
+                        d > 20   ? '#FEB24C' :
+                        d > 10   ? '#FED976' :
+                                    '#FFEDA0';
+            }
+
+            function style(feature) {
+                return {
+                    weight: 2,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.7,
+                    fillColor: getColor(feature.properties.total)
+                };
+            }
+
+            function highlightFeature(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    weight: 5,
+                    color: '#666',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    layer.bringToFront();
+                }
+
+                info.update(layer.feature.properties);
+            }
+
+            var geojson;
+
+            function resetHighlight(e) {
+                geojson.resetStyle(e.target);
+                info.update();
+            }
+
+            function zoomToFeature(e) {
+                map.fitBounds(e.target.getBounds());
+            }
+
+            function onEachFeature(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+                    click: zoomToFeature
+                });
+            }
+
+            geojson = L.geoJson(statesData, {
+                style: style,
+                onEachFeature: onEachFeature
+            }).addTo(map);
+
+            // map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
+
+
+            var legend = L.control({position: 'bottomright'});
+
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend'),
+                    grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+                    labels = [],
+                    from, to;
+
+                for (var i = 0; i < grades.length; i++) {
+                    from = grades[i];
+                    to = grades[i + 1];
+
+                    labels.push(
+                        '<i style="background:' + getColor(from + 1) + '"></i> ' +
+                        from + (to ? '&ndash;' + to : '+'));
+                }
+
+                div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+            legend.addTo(map);
+
         </script>
     </body>
 </html>

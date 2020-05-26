@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,22 +14,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    $reports = DB::table('district_reports')
-    ->join('districts', 'district_reports.district_id', '=', 'districts.id')
-    ->select('district_reports.*', 'districts.district_name')
-    ->get();
-
-    return view('map', ['reports' => $reports]);
-})->name('map');
+Route::get('/', 'MapController@index')->name('map');
+// Route::get('/{')
 
 Route::get('/test', function () {
     return view('mapcopy');
 });
 
 Route::get('/mess', function () {
-    return view('mapmess');
+    $kmz = "";
+
+    return view('mapmess', ['kmz' => $kmz]);
 });
+
+Route::get('/kmz', function () {
+    return response()->download(storage_path("app/public/bali-kabupaten.kmz"));
+})->name('kmz');
+
+Route::get('/geojson', function () {
+    return response()->download(storage_path("app/public/bali-kab.geojson"));
+})->name('kmz');
 
 Route::resource('district', 'DistrictController')->middleware('auth');
 

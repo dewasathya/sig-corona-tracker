@@ -29,34 +29,58 @@
 
         <script>
             var map = L.map('map');
-            // map.setView(new L.LatLng(43.5978, 12.7059), 5);
-            map.setView(new L.LatLng(-8.691325, 115.193538), 11);
 
-            // var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            //     maxZoom: 17,
-            //     attribution: 'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-            //     opacity: 0.90
-            // });
-            // OpenTopoMap.addTo(map);
+            map.setView(new L.LatLng(-8.4560705, 115.1118982), 10);
 
-            L.tileLayer('https://api.maptiler.com/maps/streets/256/{z}/{x}/{y}.png?key=ryTGNLroM8LwjCfSWkCH', {
-                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>', 
+            var OpenTopoMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
-
             // Instantiate KMZ parser (async)
             var kmzParser = new L.KMZParser({
-                onKMZLoaded: function(layer, name) {
+                onKMZLoaded: function (layer, name) {
+                    // add layer to layer control
                     control.addOverlay(layer, name);
                     layer.addTo(map);
-                },
-                // interactive: false,
-                pointable: true,
+                    // get all sub layer on kmz_layers
+                    var layerData = layer.getLayers()[0].getLayers();
+                    // fetching data sub layer
+                    layerData.forEach(function (data, index) {
+                        // ambil data sub layer
+                        var negara = data.feature.properties.NAME_0;
+                        var provinsi = data.feature.properties.NAME_1;
+                        var kabupaten = data.feature.properties.NAME_2;
+                        //Ganti warna Layer
+                        if (kabupaten == 'Badung') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#FF0000' });
+                        } else if (kabupaten == 'Bangli') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#808000' });
+                        } else if (kabupaten == 'Buleleng') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#FFFF00' });
+                        } else if (kabupaten == 'Denpasar') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#00FF00' });
+                        } else if (kabupaten == 'Gianyar') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#FF7F00' });
+                        } else if (kabupaten == 'Jembrana') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#964B00' });
+                        } else if (kabupaten == 'Karangasem') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#0000FF' });
+                        } else if (kabupaten == 'Klungkung') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#BF00FF' });
+                        } else if (kabupaten == 'Tabanan') {
+                            data.setStyle({ fillOpacity: '0.5', fillColor: '#C0C0C0' });
+                        }
+
+                        data.addTo(map);
+                        data.bindPopup('<h3>Kabupaten/Kota : <a>' + kabupaten + '<a></h3><br />Total Kasus Positif: ' + );
+                    });
+
+                }
             });
-
             // Add remote KMZ files as layers (NB if they are 3rd-party servers, they MUST have CORS enabled)
-            kmzParser.load('bali_districts.kmz');
+            kmzParser.load('{{ route('kmz')}}');
 
-            var control = L.control.layers(null, null, { collapsed:false }).addTo(map);
+            var control = L.control.layers(null, null, { collapsed: false }).addTo(map);
         </script>
     </body>
 </html>

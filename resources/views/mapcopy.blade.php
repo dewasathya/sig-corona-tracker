@@ -1,154 +1,168 @@
+
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+	
+	<title>Choropleth Tutorial - Leaflet</title>
 
-        <style>#map { min-height: 500px;} </style>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
 
-        <!-- CSRF Token -->
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Laravel') }}</title>
-
-        <!-- Scripts -->
-        <script src="{{ asset('js/app.js') }}" defer></script>
-
-        <!-- Fonts -->
-        <link rel="dns-prefetch" href="//fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
-        <!-- Styles -->
-        <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
-        <!-- Leaflet (JS/CSS) -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
-        <!-- Leaflet- KMZ -->
-        <script src="https://unpkg.com/leaflet-kmz@latest/dist/leaflet-kmz.js"></script>
-    </head>
-
-    <body>
-        <div id="app">
-            <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-                <div class="container">
-                    <a class="navbar-brand" href="{{ route('map') }}">
-                        {{ config('app.name') }}
-                    </a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <!-- Left Side Of Navbar -->
-                        <ul class="navbar-nav mr-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('map')}}">{{ __('Peta')}}</a>
-                            </li>
-
-                            @auth
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{route('district.index')}}">{{ __('Data Kabupaten')}}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('report.index')}}">{{ __('Data Laporan')}}</a>
-                            </li>
-                            @endauth
-                        </ul>
-
-                        <!-- Right Side Of Navbar -->
-                        <ul class="navbar-nav ml-auto">
-                            <!-- Authentication Links -->
-                            @guest
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                                </li>
-                                @if (Route::has('register'))
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                    </li>
-                                @endif
-                            @else
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                        {{ Auth::user()->name }} <span class="caret"></span>
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                                        document.getElementById('logout-form').submit();">
-                                            {{ __('Logout') }}
-                                        </a>
-
-                                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                            @csrf
-                                        </form>
-                                    </div>
-                                </li>
-                            @endguest
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-
-            <main class="py-4">
-                <div class="container">
-                    <div class="row justify-content-center mb-2">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <p class="font-weight-bold mb-0">Peta Sebaran Kasus Positif</p>
-                                </div>
-                                <div class="card-body">
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row justify-content-center">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <p class="font-weight-bold mb-0">Peta Sebaran Kasus Positif</p>
-                                </div>
-                                <div class="card-body">
-                                    <div id="map">
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
 
 
-        <script>
-            var map = L.map('map');
-            map.invalidateSize();
-            map.setView(new L.LatLng(-8.691325, 115.193538), 11);
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		#map {
+			width: 600px;
+			height: 400px;
+		}
+	</style>
 
-            L.tileLayer('https://api.maptiler.com/maps/streets/256/{z}/{x}/{y}.png?key=ryTGNLroM8LwjCfSWkCH', {
-                attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>', 
-            }).addTo(map);
+	<style>#map { width: 800px; height: 500px; }
+.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+.legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }</style>
+</head>
+<body>
 
-            // Instantiate KMZ parser (async)
-            var kmzParser = new L.KMZParser({
-                onKMZLoaded: function(layer, name) {
-                    control.addOverlay(layer, name);
-                    layer.addTo(map);
-                },
-                // interactive: false,
-                pointable: true,
-            });
+<div id='map'></div>
 
-            // Add remote KMZ files as layers (NB if they are 3rd-party servers, they MUST have CORS enabled)
-            
+<script type="text/javascript" src="{{ asset('js/bali-seperated.js') }}"></script>
 
-            var control = L.control.layers(null, null, { collapsed:false }).addTo(map);
-        </script>
-    </body>
+<script type="text/javascript">
+    
+
+    var map = L.map('map').setView([-8.4560705, 115.1118982], 10);
+
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/light-v9',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(map);
+
+
+	// control that shows state info on hover
+	var info = L.control();
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info');
+		this.update();
+		return this._div;
+	};
+
+	info.update = function (props) {
+		this._div.innerHTML = '<h4>Kasus Positif COVID-19</h4>' +  (props ?
+			'<b>' + props.name + '</b><br />' + 'Total ' + props.total + ' kasus positif'
+			: 'Letakkan kursor di atas kabupaten');
+	};
+
+	info.addTo(map);
+
+
+	// get color depending on population density value
+	function getColor(d) {
+		return d > 1000 ? '#800026' :
+				d > 500  ? '#BD0026' :
+				d > 200  ? '#E31A1C' :
+				d > 100  ? '#FC4E2A' :
+				d > 50   ? '#FD8D3C' :
+				d > 20   ? '#FEB24C' :
+				d > 10   ? '#FED976' :
+							'#FFEDA0';
+	}
+
+	function style(feature) {
+		return {
+			weight: 2,
+			opacity: 1,
+			color: 'white',
+			dashArray: '3',
+			fillOpacity: 0.7,
+			fillColor: getColor(feature.properties.total)
+		};
+	}
+
+	function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties);
+	}
+
+	var geojson;
+
+	function resetHighlight(e) {
+		geojson.resetStyle(e.target);
+		info.update();
+	}
+
+	function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+	}
+
+	function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		});
+	}
+
+	geojson = L.geoJson(statesData, {
+		style: style,
+		onEachFeature: onEachFeature
+	}).addTo(map);
+
+	// map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
+
+
+	var legend = L.control({position: 'bottomright'});
+
+	legend.onAdd = function (map) {
+
+		var div = L.DomUtil.create('div', 'info legend'),
+			grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+			labels = [],
+			from, to;
+
+		for (var i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+
+			labels.push(
+				'<i style="background:' + getColor(from + 1) + '"></i> ' +
+				from + (to ? '&ndash;' + to : '+'));
+		}
+
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+	legend.addTo(map);
+
+</script>
+
+
+
+</body>
 </html>
